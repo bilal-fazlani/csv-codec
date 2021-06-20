@@ -2,6 +2,8 @@ package com.bilalfazlani
 
 import scala.util.Try
 
+extension (str: String) def parse[A: Decoder] = Decoder[A].decode(str)
+
 trait Decoder[T]:
   def decode(str: String): Either[String, T]
 object Decoder {

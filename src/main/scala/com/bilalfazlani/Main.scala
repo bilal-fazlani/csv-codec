@@ -1,4 +1,10 @@
 package com.bilalfazlani
 
 @main def hello: Unit =
-  println("hello scala 3 csv")
+  // enum AnimalType derives Encoder:
+  // case Pet, Wild
+
+  case class Age(years: Int, months: Int)
+  case class Animal(name: String, age: Age) derives Encoder
+  val dog = Animal("dog", Age(3, 4))
+  println(dog.encode)

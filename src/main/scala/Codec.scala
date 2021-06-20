@@ -1,3 +1,6 @@
+import scala.util.Try
+//------------------------------------ ENCODING -------------------------------
+
 trait Decoder[T]:
   def decode(str: String): Either[String, T]
 object Decoder {
@@ -18,6 +21,16 @@ given Decoder[Boolean] = new {
     str.toBooleanOption.toRight(s"$str is not a valid Boolean")
 }
 
+given [T: Decoder]: Decoder[Option[T]] = new {
+  def decode(str: String): Either[String, Option[T]] =
+    str.trim match {
+      case "" => Right(None)
+      case x  => Decoder[T].decode(str).map(Some.apply)
+    }
+}
+
+//------------------------------------ ENCODING -------------------------------
+
 trait Encoder[T]:
   extension (value: T) def encode: String
 
@@ -31,4 +44,8 @@ given Encoder[Int] = new {
 
 given Encoder[Boolean] = new {
   extension (value: Boolean) def encode: String = value.toString
+}
+
+given [T: Encoder]: Encoder[Option[T]] = new {
+  extension (value: Option[T]) def encode: String = value.fold("")(_.encode)
 }

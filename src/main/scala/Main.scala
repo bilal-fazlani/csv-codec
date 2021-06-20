@@ -32,3 +32,7 @@ given Decoder[Person] = new {
   val person = Person("bilal", 20, true).encode
   println(person.encode)
   println(Decoder[Person].decode("bilal,20,true"))
+  println(Decoder[Option[Int]].decode("2"))
+  println(Decoder[Option[Int]].decode(""))
+  println(None.asInstanceOf[Option[Int]].encode)
+  println(Option(2).encode)

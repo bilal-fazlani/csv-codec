@@ -5,5 +5,8 @@ lazy val root = project
   .settings(
     name := "metacsv",
     version := "0.1.0",
-    scalaVersion := scala3Version
+    scalaVersion := scala3Version,
+    libraryDependencies ++= Seq(
+      "org.scalameta" %% "munit" % "0.7.26" % Test
+    )
   )

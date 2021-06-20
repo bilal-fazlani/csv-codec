@@ -1,3 +1,5 @@
+package com.bilalfazlani
+
 case class Person(name: String, age: Int, employee: Boolean)
 
 given Encoder[Person] = new {
@@ -18,7 +20,7 @@ given Decoder[Person] = new {
           age <- Decoder[Int].decode(ageStr)
           emp <- Decoder[Boolean].decode(empStr)
         } yield (Person(nameStr, age, emp))
-      case _ => Left(s"[$str could not be parsed into Person]")
+      case _ => Left(s"[$str] could not be parsed into Person")
     }
 }
 
@@ -36,3 +38,5 @@ given Decoder[Person] = new {
   println(Decoder[Option[Int]].decode(""))
   println(None.asInstanceOf[Option[Int]].encode)
   println(Option(2).encode)
+  println(None.asInstanceOf[Option[Person]].encode)
+  println(Option(Person("bilal", 20, true)).encode)

@@ -51,7 +51,8 @@ given [T: Encoder]: Encoder[Option[T]] = new {
   private lazy val enc = Encoder[T]
   extension (value: Option[T])
     def encode: String =
-      value.fold(List.fill(enc.fieldSize)("").mkString(","))(_.encode)
+      val empty = "," * (enc.fieldSize - 1)
+      value.fold(empty)(_.encode)
   private[bilalfazlani] override def fieldSize: Int = enc.fieldSize
 }
 

@@ -1,4 +1,4 @@
-# MetaCSV
+# CSV-SCALA
 
 - [x] Shapeless
 - [ ] Decoder

@@ -19,9 +19,7 @@ object Encoder {
     new Encoder[T]:
       extension (t: T)
         def encode: String =
-          val index = s.ordinal(t)
-          println(s"s: $s")
-          println(s"index: $index")
+          val index   = s.ordinal(t)
           val encoder = encoders(index)
           encoder.asInstanceOf[Encoder[Any]].encode(t)
 
@@ -45,18 +43,10 @@ object Encoder {
       case _: Mirror.ProductOf[T] => productEncoder(encoders)
 }
 
-given Encoder[String] = new {
-  extension (value: String) def encode: String = value
-}
+given Encoder[String] = a => a
 
-given Encoder[Int] = new {
-  extension (value: Int) def encode: String = value.toString
-}
+given Encoder[Int] = a => a.toString
 
-given Encoder[Boolean] = new {
-  extension (value: Boolean) def encode: String = value.toString
-}
+given Encoder[Boolean] = a => a.toString
 
-given [T: Encoder]: Encoder[Option[T]] = new {
-  extension (value: Option[T]) def encode: String = value.fold("")(_.encode)
-}
+given [T: Encoder]: Encoder[Option[T]] = a => a.fold("")(_.encode)

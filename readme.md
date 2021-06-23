@@ -1,4 +1,8 @@
-# CSV-SCALA
+# csv-scala
+
+> ### Automatically derived CSV Codecs for Scala 3 ADTs
+
+----
 
 - [x] Shapeless
 - [ ] Decoder

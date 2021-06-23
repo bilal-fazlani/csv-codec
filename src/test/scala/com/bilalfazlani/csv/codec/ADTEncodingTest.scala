@@ -20,7 +20,7 @@ enum Department derives Encoder:
   case Sales
   case Custom(departmentId: Int, departmentName: String)
 
-class ProductEncoderTest extends munit.FunSuite {
+class ADTEncodingTest extends munit.FunSuite {
   test("Case class") {
     val person = Person(
       "bilal",

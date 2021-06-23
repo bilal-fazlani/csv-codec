@@ -1,4 +1,4 @@
-package com.bilalfazlani
+package com.bilalfazlani.csv.codec
 
 case class Employee(name: String, age: Int, permanent: Boolean)
 

@@ -1,4 +1,4 @@
-package com.bilalfazlani
+package com.bilalfazlani.csv.codec
 
 @main def hello: Unit =
   // enum AnimalType derives Encoder:

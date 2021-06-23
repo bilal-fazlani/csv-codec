@@ -1,4 +1,4 @@
-package com.bilalfazlani
+package com.bilalfazlani.csv.codec
 
 import scala.util.Try
 import scala.deriving.*

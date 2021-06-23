@@ -1,4 +1,4 @@
-package com.bilalfazlani
+package com.bilalfazlani.csv.codec
 
 class DecoderTest extends munit.FunSuite {
   case class Case[T: Decoder](

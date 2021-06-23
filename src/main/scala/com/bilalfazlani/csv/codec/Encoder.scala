@@ -1,4 +1,4 @@
-package com.bilalfazlani
+package com.bilalfazlani.csv.codec
 
 import shapeless3.deriving.*
 
@@ -55,38 +55,3 @@ given [T: Encoder]: Encoder[Option[T]] = new {
       value.fold(empty)(_.encode)
   private[bilalfazlani] override def fieldSize: Int = enc.fieldSize
 }
-
-//-------------- TRY OUT -----------------
-
-case class Age(years: Int, months: Int)
-case class Person(
-    name: String,
-    bla: Option[Option[Option[Int]]],
-    middleName: Option[String],
-    city: String,
-    age: Age,
-    parentAge: Option[Age],
-    employeeType: EmployeeType,
-    department: Option[Department]
-) derives Encoder
-
-enum EmployeeType derives Encoder:
-  case Permanent, Contractor
-
-enum Department derives Encoder:
-  case Marketing
-  case Sales
-  case Custom(departmentId: Int, departmentName: String)
-
-@main def hello12 =
-  val p = Person(
-    "bilal",
-    Some(Some(Some(3))),
-    None,
-    "mumbai",
-    Age(20, 12),
-    None,
-    EmployeeType.Contractor,
-    None
-  )
-  println(p.encode)

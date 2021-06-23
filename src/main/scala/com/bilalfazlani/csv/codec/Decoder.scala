@@ -1,7 +1,6 @@
 package com.bilalfazlani.csv.codec
 
-import scala.util.Try
-import scala.deriving.*
+import shapeless3.deriving.*
 import scala.compiletime.{erasedValue, summonInline}
 
 extension (str: String) def parse[A: Decoder] = Decoder[A].decode(str)
@@ -10,6 +9,11 @@ trait Decoder[T]:
   def decode(str: String): Either[String, T]
 object Decoder {
   def apply[T: Decoder] = summon[Decoder[T]]
+  inline def derived[T](using gen: K0.Generic[T]): Decoder[T] = new {
+    def decode(str: String): Either[String, T] = Left(
+      "decoder derivation not supported yet"
+    )
+  }
 }
 
 given Decoder[String] = new {

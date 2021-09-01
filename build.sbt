@@ -8,6 +8,6 @@ lazy val root = project
     scalaVersion := scala3Version,
     libraryDependencies ++= Seq(
       "org.typelevel" %% "shapeless3-deriving" % "3.0.2",
-      "org.scalameta" %% "munit"               % "0.7.27" % Test
+      "org.scalameta" %% "munit"               % "0.7.29" % Test
     )
   )

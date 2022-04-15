@@ -1,39 +1,41 @@
 package com.bilalfazlani.csv.codec
 
-import shapeless3.deriving.*
-import scala.compiletime.{erasedValue, summonInline}
+import magnolia1.*
 
-extension (str: String) def parse[A: Decoder] = Decoder[A].decode(str)
+enum CsvParsingError:
+  case InvalidValue(value: String, targetType: String)
+  case InsufficientValues
+
+extension (str: String) {
+  def parse[T: Decoder] = summon[Decoder[T]].decode(str)
+}
+
+type ParseResult[T] = Either[CsvParsingError, T]
 
 trait Decoder[T]:
-  def decode(str: String): Either[String, T]
-object Decoder {
+  def decode(str: String): ParseResult[T]
+
+object Decoder extends AutoDerivation[Decoder] {
   def apply[T: Decoder] = summon[Decoder[T]]
-  inline def derived[T](using gen: K0.Generic[T]): Decoder[T] = new {
-    def decode(str: String): Either[String, T] = Left(
-      "decoder derivation not supported yet"
-    )
-  }
-}
 
-given Decoder[String] = new {
-  def decode(str: String): Either[String, String] = Right(str)
-}
+  def join[T](ctx: CaseClass[Decoder.Typeclass, T]): Decoder[T] = value =>
+    ctx
+      .constructEither { p =>
+        val strings     = parse(value)
+        if (p.index < strings.length) then p.typeclass.decode(strings(p.index))
+        else Left(CsvParsingError.InsufficientValues)
+      }
+      .left
+      .map(_.head)
 
-given Decoder[Int] = new {
-  def decode(str: String): Either[String, Int] =
-    str.toIntOption.toRight(s"$str is not a valid Int")
-}
+  def split[T](ctx: SealedTrait[Decoder, T]): Decoder[T] = value => ???
 
-given Decoder[Boolean] = new {
-  def decode(str: String): Either[String, Boolean] =
-    str.toBooleanOption.toRight(s"$str is not a valid Boolean")
-}
+  private def parse(str: String): List[String] =
+    str.split(",").map(_.trim).toList
 
-given [T: Decoder]: Decoder[Option[T]] = new {
-  def decode(str: String): Either[String, Option[T]] =
-    str.trim match {
-      case "" => Right(None)
-      case x  => Decoder[T].decode(str).map(Some.apply)
-    }
+  given Decoder[String] = s => Right(s)
+  given Decoder[Int] = s =>
+    s.toIntOption.toRight(CsvParsingError.InvalidValue(s, "Int"))
+  given Decoder[Boolean] = s =>
+    s.toBooleanOption.toRight(CsvParsingError.InvalidValue(s, "Boolean"))
 }

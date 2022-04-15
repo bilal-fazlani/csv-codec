@@ -1,4 +1,4 @@
-val scala3Version = "3.0.2"
+val scala3Version = "3.1.1"
 
 lazy val root = project
   .in(file("."))
@@ -7,7 +7,7 @@ lazy val root = project
     version      := "0.1.0",
     scalaVersion := scala3Version,
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "shapeless3-deriving" % "3.0.3",
-      "org.scalameta" %% "munit"               % "0.7.29" % Test
+      "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.1",
+      "org.scalameta"                %% "munit"    % "1.0.0-M3" % Test
     )
   )

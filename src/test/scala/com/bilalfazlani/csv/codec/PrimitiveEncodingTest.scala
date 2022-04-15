@@ -1,18 +1,15 @@
 package com.bilalfazlani.csv.codec
 
 class PrimitiveEncodingTest extends munit.FunSuite {
-  case class Case[T: Encoder](name: String, value: T, expected: String) {
+  case class Case[T: Encoder](name: String, value: T, expected: List[String]) {
     val encode = Encoder[T].encode
   }
 
   val tests = List(
-    Case("Integer", 2, "2"),
-    Case("String", "lorem", "lorem"),
-    Case("Empty String", "", ""),
-    Case("Boolean", true, "true"),
-    Case("Option[Boolean]", Option(true), "true"),
-    Case("Option[Int]", Option(3), "3"),
-    Case[Option[Int]]("None (Int)", None, "")
+    Case("Integer", 2, List("2")),
+    Case("String", "lorem", List("lorem")),
+    Case("Empty String", "", List("")),
+    Case("Boolean", true, List("true"))
   )
   tests.foreach { t =>
     test(t.name) {

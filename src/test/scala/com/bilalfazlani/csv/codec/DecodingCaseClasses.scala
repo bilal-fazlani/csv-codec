@@ -18,14 +18,17 @@ class DecodingCaseClasses extends munit.FunSuite {
 
     val vehicalString = "MH0123, HYUNDAI, KOREA, CRETA"
     val vehical = Vehicle("MH0123", Model(Brand("HYUNDAI", "KOREA"), "CRETA"))
-    assertEquals(vehicalString.parse[Vehicle], Right(ParseSuccess(List.empty, vehical)))
+    assertEquals(
+      vehicalString.parse[Vehicle],
+      Right(ParseSuccess(List.empty, vehical))
+    )
   }
 
   test("Insufficient params") {
     val str = "bilal"
     assertEquals(
       str.parse[Employee],
-      Left(CsvParsingError.InsufficientValues)
+      Left(CsvParsingError.NoValue("age"))
     )
   }
 
@@ -33,7 +36,7 @@ class DecodingCaseClasses extends munit.FunSuite {
     val person = "bilal,1k3,false"
     assertEquals(
       person.parse[Employee],
-      Left(CsvParsingError.InvalidValue("1k3", "Int"))
+      Left(CsvParsingError.InvalidValue("1k3", "Int", "age"))
     )
   }
 }

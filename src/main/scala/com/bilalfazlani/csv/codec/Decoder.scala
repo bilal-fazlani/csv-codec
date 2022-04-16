@@ -2,9 +2,10 @@ package com.bilalfazlani.csv.codec
 
 import magnolia1.*
 
-enum CsvParsingError:
-  case InvalidValue(value: String, targetType: String)
-  case InsufficientValues
+enum CsvParsingError(label: String):
+  case InvalidValue(value: String, targetType: String, label: String = "")
+      extends CsvParsingError(label)
+  case NoValue(label: String = "") extends CsvParsingError(label)
 
 extension (str: String) {
   def parse[T: Decoder] = summon[Decoder[T]].decode(str)
@@ -34,10 +35,17 @@ object Decoder extends AutoDerivation[Decoder] {
               p.typeclass
                 .decode(value)
                 .map(x => ParseSuccess(x.remainder, Seq(x.value)))
+                .left
+                .map {
+                  case e: CsvParsingError.InvalidValue =>
+                    e.copy(label = p.label)
+                  case e: CsvParsingError.NoValue =>
+                    e.copy(label = p.label)
+                }
             )
           //nothing left
           case Some(Right(previous)) if previous.remainder.isEmpty =>
-            Some(Left(CsvParsingError.InsufficientValues))
+            Some(Left(CsvParsingError.NoValue(p.label)))
           //next params
           case Some(Right(previous)) =>
             Some(
@@ -46,25 +54,31 @@ object Decoder extends AutoDerivation[Decoder] {
                 .map(x =>
                   (ParseSuccess(x.remainder, previous.value.appended(x.value)))
                 )
+                .left
+                .map {
+                  case e: CsvParsingError.InvalidValue =>
+                    e.copy(label = p.label)
+                  case e: CsvParsingError.NoValue =>
+                    e.copy(label = p.label)
+                }
             )
           case Some(l @ Left(_)) =>
             Some(l)
         }
       }
-      .fold(fail(CsvParsingError.InsufficientValues))(identity)
-    //returnEither[CsvParsingError, ParseSuccess[T]]
+      .fold(fail(CsvParsingError.NoValue()))(identity)
     parseResult.map(x => ParseSuccess(x.remainder, ctx.rawConstruct(x.value)))
 
   def split[T](ctx: SealedTrait[Decoder, T]): Decoder[T] = value => ???
 
   given Decoder[String] = s =>
     s.split(",").toList match {
-      case Nil          => fail(CsvParsingError.InsufficientValues)
+      case Nil          => fail(CsvParsingError.NoValue())
       case head :: tail => success(head.trim, tail)
     }
   given Decoder[Int] = s =>
     s.split(",").toList match {
-      case Nil => fail(CsvParsingError.InsufficientValues)
+      case Nil => fail(CsvParsingError.NoValue())
       case head :: tail =>
         head.trim.toIntOption
           .fold(fail(CsvParsingError.InvalidValue(head, "Int")))(int =>
@@ -73,7 +87,7 @@ object Decoder extends AutoDerivation[Decoder] {
     }
   given Decoder[Boolean] = s =>
     s.split(",").toList match {
-      case Nil => fail(CsvParsingError.InsufficientValues)
+      case Nil => fail(CsvParsingError.NoValue())
       case head :: tail =>
         head.trim.toBooleanOption
           .fold(fail(CsvParsingError.InvalidValue(head, "Boolean")))(bool =>

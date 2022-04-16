@@ -6,7 +6,7 @@ case class Person(
     city: String
 ) derives Encoder
 
-class ADTEncodingTest extends munit.FunSuite {
+class EncodingCaseClasses extends munit.FunSuite {
   test("Case class") {
     val person = Person(
       "bilal",

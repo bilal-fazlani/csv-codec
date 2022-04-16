@@ -2,7 +2,7 @@ package com.bilalfazlani.csv.codec
 
 case class Employee(name: String, age: Int, permanent: Boolean) derives Decoder
 
-class ProductDecoderTest extends munit.FunSuite {
+class DecodingCaseClasses extends munit.FunSuite {
   test("Valid CSV") {
     val person = "bilal,20,true"
     assertEquals(person.parse[Employee], Right(Employee("bilal", 20, true)))

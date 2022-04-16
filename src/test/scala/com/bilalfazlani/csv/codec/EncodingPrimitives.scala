@@ -1,6 +1,6 @@
 package com.bilalfazlani.csv.codec
 
-class PrimitiveEncodingTest extends munit.FunSuite {
+class EncodingPrimitive extends munit.FunSuite {
   case class Case[T: Encoder](name: String, value: T, expected: List[String]) {
     val encode = Encoder[T].encode
   }

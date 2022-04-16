@@ -7,7 +7,7 @@ class DecodingCaseClasses extends munit.FunSuite {
     val person = "bilal,20,true"
     assertEquals(
       person.parse[Employee],
-      Right(ParseSuccess("", Employee("bilal", 20, true)))
+      Right(ParseSuccess(List.empty, Employee("bilal", 20, true)))
     )
   }
 
@@ -18,7 +18,7 @@ class DecodingCaseClasses extends munit.FunSuite {
 
     val vehicalString = "MH0123, HYUNDAI, KOREA, CRETA"
     val vehical = Vehicle("MH0123", Model(Brand("HYUNDAI", "KOREA"), "CRETA"))
-    assertEquals(vehicalString.parse[Vehicle], Right(ParseSuccess("", vehical)))
+    assertEquals(vehicalString.parse[Vehicle], Right(ParseSuccess(List.empty, vehical)))
   }
 
   test("Insufficient params") {

@@ -9,7 +9,8 @@ class DecodingPrimitives extends munit.FunSuite {
     val decode: String => ParseResult[T] = Decoder[T].decode
   }
 
-  given a[T]: Conversion[T, ParseResult[T]] = x => Right(ParseSuccess("", x))
+  given a[T]: Conversion[T, ParseResult[T]] = x =>
+    Right(ParseSuccess(List.empty, x))
 
   val tests = List(
     TestCase("Valid Integer", "2", 2),
@@ -29,10 +30,10 @@ class DecodingPrimitives extends munit.FunSuite {
     TestCase[Int](
       "Remaining value",
       " 5 , a7 , 2b",
-      Right(ParseSuccess(" a7 , 2b", 5))
+      Right(ParseSuccess(List(" a7 ", " 2b"), 5))
     ),
     TestCase[Boolean](
-      "Empty String",
+      "Empty String for Boolean",
       "",
       Left(CsvParsingError.InvalidValue("", "Boolean"))
     )

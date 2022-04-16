@@ -1,7 +1,9 @@
 # Todo
 
+
 - [ ] Options
 - [ ] Default values
+- [ ] Lists
 - [ ] Performance benchmarks
 - [ ] Products with CoProducts
 - [ ] Tuples
@@ -12,6 +14,7 @@
 - [ ] Different length coproducts
 - [ ] Optimizations caching etc
 - [ ] Accept custom codecs
+- [x] Nested case classes
 - [x] Tests
 - [x] Magnoloa
 - [x] Decoder

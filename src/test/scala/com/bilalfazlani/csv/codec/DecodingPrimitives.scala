@@ -1,28 +1,40 @@
 package com.bilalfazlani.csv.codec
 
 class DecodingPrimitives extends munit.FunSuite {
-  case class TestCase[T: Decoder](
+  case class TestCase[+T: Decoder](
       name: String,
       value: String,
-      expected: Either[CsvParsingError, T]
+      expected: ParseResult[T]
   ) {
-    val decode = Decoder[T].decode
+    val decode: String => ParseResult[T] = Decoder[T].decode
   }
 
+  given a[T]: Conversion[T, ParseResult[T]] = x => Right(ParseSuccess("", x))
+
   val tests = List(
-    TestCase("Valid Integer", "2", Right(2)),
-    TestCase("String", "lorem", Right("lorem")),
-    TestCase("Empty String", "", Right("")),
-    TestCase("Valid Boolean", "true", Right(true)),
+    TestCase("Valid Integer", "2", 2),
+    TestCase("String", "lorem", "lorem"),
+    TestCase("Empty String", "", ""),
+    TestCase("Valid Boolean", "true", true),
     TestCase[Boolean](
       "Invalid Boolean",
       "dd",
       Left(CsvParsingError.InvalidValue("dd", "Boolean"))
     ),
-    TestCase[Boolean](
+    TestCase[Int](
       "Invalid Int",
       "5f",
       Left(CsvParsingError.InvalidValue("5f", "Int"))
+    ),
+    TestCase[Int](
+      "Remaining value",
+      " 5 , a7 , 2b",
+      Right(ParseSuccess(" a7 , 2b", 5))
+    ),
+    TestCase[Boolean](
+      "Empty String",
+      "",
+      Left(CsvParsingError.InvalidValue("", "Boolean"))
     )
   )
   tests.foreach { t =>

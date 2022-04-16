@@ -71,14 +71,28 @@ object Decoder extends AutoDerivation[Decoder] {
 
   def split[T](ctx: SealedTrait[Decoder, T]): Decoder[T] = value => ???
 
+  given optionCodec[T: Decoder]: Decoder[Option[T]] = s =>
+    s.split(",").toList match {
+      case Nil => fail(CsvParsingError.NoValue())
+      case head :: tail =>
+        if head.trim == "" then success(None, tail)
+        else
+          val dec = summon[Decoder[T]]
+          dec
+            .decode(head.trim)
+            .map(x => ParseSuccess(x.remainder, Some(x.value)))
+    }
+
   given Decoder[String] = s =>
     s.split(",").toList match {
-      case Nil          => fail(CsvParsingError.NoValue())
-      case head :: tail => success(head.trim, tail)
+      case Nil                             => fail(CsvParsingError.NoValue())
+      case head :: tail if head.trim == "" => fail(CsvParsingError.NoValue())
+      case head :: tail                    => success(head.trim, tail)
     }
   given Decoder[Int] = s =>
     s.split(",").toList match {
-      case Nil => fail(CsvParsingError.NoValue())
+      case Nil                             => fail(CsvParsingError.NoValue())
+      case head :: tail if head.trim == "" => fail(CsvParsingError.NoValue())
       case head :: tail =>
         head.trim.toIntOption
           .fold(fail(CsvParsingError.InvalidValue(head, "Int")))(int =>
@@ -87,7 +101,8 @@ object Decoder extends AutoDerivation[Decoder] {
     }
   given Decoder[Boolean] = s =>
     s.split(",").toList match {
-      case Nil => fail(CsvParsingError.NoValue())
+      case Nil                             => fail(CsvParsingError.NoValue())
+      case head :: tail if head.trim == "" => fail(CsvParsingError.NoValue())
       case head :: tail =>
         head.trim.toBooleanOption
           .fold(fail(CsvParsingError.InvalidValue(head, "Boolean")))(bool =>

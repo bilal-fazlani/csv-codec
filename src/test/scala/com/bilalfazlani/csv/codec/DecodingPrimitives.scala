@@ -15,7 +15,7 @@ class DecodingPrimitives extends munit.FunSuite {
   val tests = List(
     TestCase("Valid Integer", "2", 2),
     TestCase("String", "lorem", "lorem"),
-    TestCase("Empty String", "", ""),
+    TestCase[String]("Empty String", "", Left(CsvParsingError.NoValue())),
     TestCase("Valid Boolean", "true", true),
     TestCase[Boolean](
       "Invalid Boolean",
@@ -35,7 +35,17 @@ class DecodingPrimitives extends munit.FunSuite {
     TestCase[Boolean](
       "Empty String for Boolean",
       "",
-      Left(CsvParsingError.InvalidValue("", "Boolean"))
+      Left(CsvParsingError.NoValue())
+    ),
+    TestCase[Option[Int]](
+      "Option of Int",
+      "",
+      Right(ParseSuccess(List.empty, None))
+    ),
+    TestCase[Option[Boolean]](
+      "Option of Boolean",
+      "",
+      Right(ParseSuccess(List.empty, None))
     )
   )
   tests.foreach { t =>

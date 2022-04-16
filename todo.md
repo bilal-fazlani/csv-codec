@@ -14,6 +14,7 @@
 - [ ] Different length coproducts
 - [ ] Optimizations caching etc
 - [ ] Accept custom codecs
+- [x] Message with field label
 - [x] Nested case classes
 - [x] Tests
 - [x] Magnoloa

@@ -24,6 +24,32 @@ class DecodingCaseClasses extends munit.FunSuite {
     )
   }
 
+  test("With Optional primitive field") {
+    case class Brand(brandName: String, country: Option[String])
+    case class Model(brand: Brand, modelName: String)
+    case class Vehicle(number: String, model: Model) derives Decoder
+
+    val vehicalString = "MH0123, HYUNDAI, , CRETA"
+    val vehical = Vehicle("MH0123", Model(Brand("HYUNDAI", None), "CRETA"))
+    assertEquals(
+      vehicalString.parse[Vehicle],
+      Right(ParseSuccess(List.empty, vehical))
+    )
+  }
+
+  test("With Optional case class field".only) {
+    case class Brand(brandName: String, country: Option[String])
+    case class Model(brand: Option[Brand], modelName: String)
+    case class Vehicle(number: String, model: Model) derives Decoder
+
+    val vehicalString = "MH0123, , , CRETA"
+    val vehical       = Vehicle("MH0123", Model(None, "CRETA"))
+    assertEquals(
+      vehicalString.parse[Vehicle],
+      Right(ParseSuccess(List.empty, vehical))
+    )
+  }
+
   test("Insufficient params") {
     val str = "bilal"
     assertEquals(

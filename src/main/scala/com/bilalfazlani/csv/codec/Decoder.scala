@@ -71,7 +71,7 @@ object Decoder extends AutoDerivation[Decoder] {
 
   def split[T](ctx: SealedTrait[Decoder, T]): Decoder[T] = value => ???
 
-  given optionCodec[T: Decoder]: Decoder[Option[T]] = s =>
+  given optionDec[T: Decoder]: Decoder[Option[T]] = s =>
     s.split(",").toList match {
       case Nil => fail(CsvParsingError.NoValue())
       case head :: tail =>
@@ -89,6 +89,7 @@ object Decoder extends AutoDerivation[Decoder] {
       case head :: tail if head.trim == "" => fail(CsvParsingError.NoValue())
       case head :: tail                    => success(head.trim, tail)
     }
+    
   given Decoder[Int] = s =>
     s.split(",").toList match {
       case Nil                             => fail(CsvParsingError.NoValue())

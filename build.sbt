@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name         := "csv-codec",
-    version      := "0.2.0",
+    version      := "0.2.1",
     scalaVersion := scala3Version,
     libraryDependencies ++= Seq(
       "com.softwaremill.magnolia1_3" %% "magnolia" % "1.3.0",

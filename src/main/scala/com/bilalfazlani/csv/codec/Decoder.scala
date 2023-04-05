@@ -69,7 +69,10 @@ object Decoder extends AutoDerivation[Decoder] {
       .fold(fail(CsvParsingError.NoValue()))(identity)
     parseResult.map(x => ParseSuccess(x.remainder, ctx.rawConstruct(x.value)))
 
-  def split[T](ctx: SealedTrait[Decoder, T]): Decoder[T] = value => ???
+  def split[T](ctx: SealedTrait[Decoder, T]): Decoder[T] =
+    throw new Exception(
+      s"Sealed trait / enums (${ctx.typeInfo.full}) not supported by Decoder"
+    )
 
   given optionDec[T: Decoder]: Decoder[Option[T]] = s =>
     s.split(",").toList match {
@@ -89,7 +92,7 @@ object Decoder extends AutoDerivation[Decoder] {
       case head :: tail if head.trim == "" => fail(CsvParsingError.NoValue())
       case head :: tail                    => success(head.trim, tail)
     }
-    
+
   given Decoder[Int] = s =>
     s.split(",").toList match {
       case Nil                             => fail(CsvParsingError.NoValue())

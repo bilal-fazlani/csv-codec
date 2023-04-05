@@ -8,7 +8,7 @@ object HeaderEncoder:
   def apply[A](using HeaderEncoder[A]): HeaderEncoder[A] =
     summon[HeaderEncoder[A]]
 
-  inline def derived[A]: HeaderEncoder[A] = gen[A]
-
-  inline given gen[A]: HeaderEncoder[A] = new HeaderEncoder[A]:
+  inline def derived[A]: HeaderEncoder[A] = new HeaderEncoder[A]:
     def encodeHeaders: Seq[String] = headersOf[A]()
+
+  inline given gen[A]: HeaderEncoder[A] = derived[A]
